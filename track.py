@@ -58,7 +58,7 @@ with PoseLandmarker.create_from_options(options) as landmarker:
             print("Ignoring empty frame")
             break
 
-        cv.imshow(':(', frame)
+       # cv.imshow(':(', frame)
         timestamp += 1
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
         landmarker.detect_async(mp_image, timestamp)
