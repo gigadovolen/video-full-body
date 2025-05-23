@@ -40,7 +40,7 @@ def draw_landmarks_on_image(frame, detection_result):
       solutions.drawing_styles.get_default_pose_landmarks_style())
   return annotated_image
 
-video_stream_address = "192.168.1.111:8080"
+video_stream_address = "127.0.0.1:0000"
 
 stream = cv.VideoCapture('http://' + video_stream_address + '/video')
 if not stream.isOpened():
