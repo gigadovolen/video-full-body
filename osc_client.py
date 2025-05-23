@@ -170,7 +170,7 @@ class OscClient:
                 address_rot = f"/tracking/trackers/{addr}/rotation"
                 print("Message is ready")
 
-                if isinstance(message, Vector3):
+                if isinstance(position, Vector3):
                     try:
                         position_vector = position.to_tuple()
                         rotation_vector = rotation.to_tuple()
