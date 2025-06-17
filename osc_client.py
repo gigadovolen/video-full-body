@@ -113,45 +113,24 @@ class OscClient:
 
     @staticmethod
     def modify_message(input: mp.tasks.vision.PoseLandmarkerResult) -> dict[str, tuple[Vector3, Vector3]] | bool:
-            if input.pose_world_landmarks:
-                landmarks = input.pose_world_landmarks[0]
+            if input.pose_landmarks:
+                landmarks = input.pose_landmarks[0]
                 frame = []
                 try:
                     for landmark in landmarks:                                                           #https://ai.google.dev/static/edge/mediapipe/images/solutions/pose_landmarks_index.png
-                        frame.append(Vector3(float(landmark.x), float(landmark.y), -float(landmark.z)))  #list c 33 туплями
+                        frame.append(Vector3(float(landmark.x), -float(landmark.y), -float(landmark.z)))  #list c 33 туплями
                 except Exception as e:
                     print(f"Frame failed: {e}")
 
-                ret = {"1": ((frame[22] + frame[23]).scale(0.5, 0.5, 0.5), Vector3()),
+                ret = {#"1": ((frame[22] + frame[23]).scale(0.5, 0.5, 0.5), Vector3()),
                        "2": ((frame[10] + frame[11]).scale(0.5, 0.5, 0.5), Vector3()),
-                       "3": (frame[28], Vector3()),
-                       "4": (frame[29], Vector3()),             #1-hip,2-chest,34-feet,56-knees,78-elbows
-                       "5": (frame[24], Vector3()),
-                       "6": (frame[25], Vector3()),
+                       #"3": (frame[28], Vector3()),
+                       #"4": (frame[29], Vector3()),             #1-hip,2-chest,34-feet,56-knees,78-elbows
+                       #"5": (frame[24], Vector3()),
+                       #"6": (frame[25], Vector3()),
                        "7": (frame[12], Vector3()),
-                       "8": (frame[13], Vector3()),
-                       "head": (frame[0], Vector3())}
-
-                # try:
-                #     head_mat = RotationSolver(ret.get("head")[0], ret.get("1")[0]).rotation_mat()
-                #     head_rot = RotationSolver.euler(head_mat)
-                #     elbow1_mat = RotationSolver(ret.get("12")[0], ret.get("14")[0]).rotation_mat()
-                #     elbow1_rot = RotationSolver.euler(elbow1_mat)
-                #     elbow2_mat = RotationSolver(ret.get("13")[0], ret.get("15")[0]).rotation_mat()
-                #     elbow2_rot = RotationSolver.euler(elbow2_mat)
-                #     knee1_mat = RotationSolver(ret.get("24")[0], ret.get("26")[0]).rotation_mat()
-                #     knee1_rot = RotationSolver.euler(knee1_mat)
-                #     knee2_mat = RotationSolver(ret.get("25")[0], ret.get("27")[0]).rotation_mat()
-                #     knee2_rot = RotationSolver.euler(knee2_mat)
-                #
-                #     ret.update({"head": (frame[0], head_rot)})
-                #     ret.update({"7": (frame[0], elbow1_rot)})
-                #     ret.update({"8": (frame[0], elbow2_rot)})
-                #     ret.update({"5": (frame[0], knee1_rot)})
-                #     ret.update({"6": (frame[0], knee2_rot)})
-                # except Exception as e:
-                #     print(f"Rotation failed horribly: {e}")
-
+                       "8": (frame[13], Vector3())}
+                       #"head": (frame[0], Vector3())}
                 return ret
             return False
 
@@ -162,22 +141,21 @@ class OscClient:
 
         else:
             for addr, message in frame.items():
-                print("Message is almost ready")
 
                 position = message[0]
-                rotation = message[1]
+                # rotation = message[1]
                 address = f"/tracking/trackers/{addr}/position"
-                address_rot = f"/tracking/trackers/{addr}/rotation"
+                # address_rot = f"/tracking/trackers/{addr}/rotation"
                 print("Message is ready")
 
                 if isinstance(position, Vector3):
                     try:
                         position_vector = position.to_tuple()
-                        rotation_vector = rotation.to_tuple()
+                        # rotation_vector = rotation.to_tuple()
 
                         self.client.send_message(address, position_vector)
                         print(f"Sent message {position_vector}")
-                        self.client.send_message(address_rot, rotation_vector)
-                        print(f"Sent message {rotation_vector}")
+                        # self.client.send_message(address_rot, rotation_vector)
+                        # print(f"Sent message {rotation_vector}")
                     except Exception as e:
                         print(f"Failed to send message: {e}")
